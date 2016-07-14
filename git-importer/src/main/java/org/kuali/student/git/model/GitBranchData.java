@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +34,7 @@ import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
 import org.eclipse.jgit.lib.Repository;
+import org.kuali.student.git.model.SvnRevisionMapper.SvnRevisionMap;
 import org.kuali.student.git.model.branch.exceptions.VetoBranchException;
 import org.kuali.student.git.model.branch.utils.GitBranchUtils;
 import org.kuali.student.git.model.tree.GitTreeData;
@@ -64,7 +67,7 @@ public class GitBranchData {
 
 	private ObjectId parentId;
 
-	private Set<ObjectId> mergeParentIdSet = new HashSet<ObjectId>();
+    private Map<String, SvnRevisionMap>mergeParents = new LinkedHashMap<String, SvnRevisionMap>();
 
 	private AtomicLong blobsAdded = new AtomicLong(0L);
 
@@ -236,9 +239,19 @@ public class GitBranchData {
 	
 	
 
-	public Set<ObjectId> getMergeParentIds() {
+	public Set<ObjectId> getMergeParentIds(Set<SvnRevisionMap> svnMergeData) {
 
-		return Collections.unmodifiableSet(this.mergeParentIdSet);
+        for (SvnRevisionMap mergeData : svnMergeData) {
+            addMergeBranch(mergeData);
+        }
+
+        Set<ObjectId>latestBranchParentIds = new LinkedHashSet<ObjectId>();
+
+        for (Map.Entry<String, SvnRevisionMap>entry : this.mergeParents.entrySet()) {
+            latestBranchParentIds.add(entry.getValue().getCommitId());
+        }
+
+		return Collections.unmodifiableSet(latestBranchParentIds);
 
 	}
 
@@ -254,8 +267,27 @@ public class GitBranchData {
 		return parentId;
 	}
 
-	public void addMergeParentId(ObjectId head) {
-		this.mergeParentIdSet.add(head);
+    /**
+     * Add the merge branch.  If nothing from the indicated branch exists then store it.
+     *
+     * If there is an existing merge branch on the same branch with a smaller revision then replace it.
+     *
+     * @param revMap
+     */
+	public void addMergeBranch(SvnRevisionMap revMap) {
+
+        String branchName = revMap.getBranchName();
+
+        SvnRevisionMap existingRevMap = this.mergeParents.get(branchName);
+
+        if (existingRevMap == null) {
+            this.mergeParents.put(branchName, revMap);
+        }
+        else {
+            if (existingRevMap.getRevision() < revMap.getRevision())
+                this.mergeParents.put(branchName, revMap);
+        }
+
 	}
 
 	public void setCreated(boolean created) {
@@ -275,7 +307,7 @@ public class GitBranchData {
 		created = false;
 		blobsAdded.set(0L);
 		branchRoot = new GitTreeData(nodeInitializer);
-		mergeParentIdSet.clear();
+		mergeParents.clear();
 		parentId = null;
 
 	}
@@ -354,7 +386,12 @@ public class GitBranchData {
 	public boolean isTreeDirty() {
 		return this.branchRoot.isTreeDirty();
 	}
-	
-	
 
+
+    public void addParentBranch(SvnRevisionMap parentRevMap) {
+
+        addMergeBranch(parentRevMap);
+
+        this.parentId = parentRevMap.getCommitId();
+    }
 }

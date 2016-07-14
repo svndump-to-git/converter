@@ -15,14 +15,6 @@
  */
 package org.kuali.student.git.model;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
@@ -48,6 +40,14 @@ import org.junit.Test;
 import org.kuali.student.git.model.SvnRevisionMapper.SvnRevisionMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * @author Kuali Student Team
@@ -205,7 +205,7 @@ public class TestSvnRevisionMapper {
 			testRevision(randomRevision, branchHeads);
 		}
 		
-		ObjectId head = revisionMapper.getRevisionBranchHead(98, "master");
+		ObjectId head = revisionMapper.getRevisionBranchHead(98, "master").getCommitId();
 		
 		Assert.assertNotNull("name should never be null", head);
 		
@@ -307,7 +307,7 @@ public class TestSvnRevisionMapper {
 	
 		for (Ref ref : branchHeads) {
 			
-			ObjectId head = revisionMapper.getRevisionBranchHead(revision, ref.getName().replaceFirst(Constants.R_HEADS, ""));
+			ObjectId head = revisionMapper.getRevisionBranchHead(revision, ref.getName().replaceFirst(Constants.R_HEADS, "")).getCommitId();
 			
 			if (head == null)
 				return false;
@@ -320,7 +320,7 @@ public class TestSvnRevisionMapper {
 		
 		for (Ref ref : branchHeads) {
 			
-			ObjectId head = revisionMapper.getRevisionBranchHead(revision, ref.getName().replaceFirst(Constants.R_HEADS, ""));
+			ObjectId head = revisionMapper.getRevisionBranchHead(revision, ref.getName().replaceFirst(Constants.R_HEADS, "")).getCommitId();
 			
 			Assert.assertNotNull("head should never be null", head);
 			

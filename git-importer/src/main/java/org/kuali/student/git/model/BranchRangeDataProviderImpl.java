@@ -15,14 +15,15 @@
  */
 package org.kuali.student.git.model;
 
-import java.io.IOException;
-
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.kuali.student.git.model.SvnMergeInfoUtils.BranchRangeDataProvider;
+import org.kuali.student.git.model.SvnRevisionMapper.SvnRevisionMap;
+
+import java.io.IOException;
 
 /**
  * @author Kuali Student Team
@@ -51,14 +52,14 @@ public class BranchRangeDataProviderImpl implements BranchRangeDataProvider {
 
 		try {
 			
-			ObjectId firstHead = revisionMapper.getRevisionBranchHead(firstRevision, branchName);
+			SvnRevisionMap firstHeadRevMap = revisionMapper.getRevisionBranchHead(firstRevision, branchName);
+
+            SvnRevisionMap secondHeadRevMap = revisionMapper.getRevisionBranchHead(secondRevision, branchName);
 			
-			ObjectId secondHead = revisionMapper.getRevisionBranchHead(secondRevision, branchName);
-			
-			if (firstHead == null || secondHead == null)
+			if (firstHeadRevMap == null || secondHeadRevMap == null)
 				return false; // insufficent data
 			
-			if (parentOf (firstHead, secondHead) || parentOf (secondHead, firstHead))
+			if (parentOf (firstHeadRevMap.getCommitId(), secondHeadRevMap.getCommitId()) || parentOf (secondHeadRevMap.getCommitId(), firstHeadRevMap.getCommitId()))
 				return true;
 			else
 				return false;

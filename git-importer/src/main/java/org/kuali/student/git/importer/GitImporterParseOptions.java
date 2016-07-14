@@ -311,8 +311,7 @@ public class GitImporterParseOptions extends AbstractParseOptions {
 
 					RevWalk rw = new RevWalk(repo);
 
-					RevCommit lastCommit = rw.parseCommit(ObjectId
-							.fromString(head.getCommitId()));
+					RevCommit lastCommit = rw.parseCommit(head.getCommitId());
 
 					DateTime dt = new DateTime(lastCommit.getAuthorIdent()
 							.getWhen()).plusMinutes(5);
@@ -390,15 +389,10 @@ public class GitImporterParseOptions extends AbstractParseOptions {
 				
 				Set<ObjectId> parentSet = new HashSet<ObjectId>();
 
-				ObjectId parentId = data.getParentId();
+                Set<SvnRevisionMap> svnMergeData = computeSvnMergeInfoParentIds(currentRevision,
+                        data);
 
-				if (parentId != null)
-					parentSet.add(parentId);
-
-				parentSet.addAll(computeSvnMergeInfoParentIds(currentRevision,
-						data));
-
-				parentSet.addAll(data.getMergeParentIds());
+				parentSet.addAll(data.getMergeParentIds(svnMergeData));
 
 				if (data.getBlobsAdded() == 0 && !data.isBlobsDeleted()
 						&& !data.isCreated() && !data.isTreeDirty()) {
@@ -545,10 +539,10 @@ public class GitImporterParseOptions extends AbstractParseOptions {
 		}
 	}
 
-	private Set<ObjectId> computeSvnMergeInfoParentIds(long currentRevision,
+	private Set<SvnRevisionMap> computeSvnMergeInfoParentIds(long currentRevision,
 			GitBranchData data) {
 
-		Set<ObjectId> mergeInfoParentIds = new HashSet<>();
+		Set<SvnRevisionMap> mergeInfoParentIds = new HashSet<SvnRevisionMap>();
 
 		try {
 
@@ -597,27 +591,29 @@ public class GitImporterParseOptions extends AbstractParseOptions {
 					BranchData mergedBranchData = branchDetector.parseBranch(
 							0L, mergedBranchPath);
 
-                    Long maxMergedRevision = Collections.max(delta.getMergedRevisions());
+                    if (delta.getMergedRevisions().size() > 0) {
+                        Long maxMergedRevision = Collections.max(delta.getMergedRevisions());
 
-                    ObjectId mergeBranchHeadId = revisionMapper
-                            .getRevisionBranchHead(maxMergedRevision,
-                                    GitBranchUtils.getCanonicalBranchName(
-                                            mergedBranchData
-                                                    .getBranchPath(),
-                                            maxMergedRevision, revisionMapper));
+                        SvnRevisionMap mergeRevMap = revisionMapper
+                                .getRevisionBranchHead(maxMergedRevision,
+                                        GitBranchUtils.getCanonicalBranchName(
+                                                mergedBranchData
+                                                        .getBranchPath(),
+                                                maxMergedRevision, revisionMapper));
 
-                    if (mergeBranchHeadId == null) {
-                        log.warn(String
-                                .format("failed to merge %s into %s at revision %d",
-                                        mergedBranchPath,
-                                        data.getBranchName(),
-                                        maxMergedRevision));
-                    } else {
-                        mergeInfoParentIds.add(mergeBranchHeadId);
-                        log.info(String.format(
-                                "merged %s at revision %d into branch %s",
-                                mergedBranchPath, maxMergedRevision,
-                                data.getBranchName()));
+                        if (mergeRevMap == null) {
+                            log.warn(String
+                                    .format("failed to merge %s into %s at revision %d",
+                                            mergedBranchPath,
+                                            data.getBranchName(),
+                                            maxMergedRevision));
+                        } else {
+                            mergeInfoParentIds.add(mergeRevMap);
+                            log.info(String.format(
+                                    "merged %s at revision %d into branch %s",
+                                    mergedBranchPath, maxMergedRevision,
+                                    data.getBranchName()));
+                        }
                     }
                 } catch (VetoBranchException e) {
 					// skip over if the path is not a known branch

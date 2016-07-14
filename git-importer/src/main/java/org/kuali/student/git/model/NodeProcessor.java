@@ -15,16 +15,6 @@
  */
 package org.kuali.student.git.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.io.input.BoundedInputStream;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
@@ -33,7 +23,6 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectInserter;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.RefUpdate.Result;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
@@ -50,12 +39,19 @@ import org.kuali.student.git.model.exception.InvalidBlobChangeException;
 import org.kuali.student.git.model.ref.utils.GitRefUtils;
 import org.kuali.student.git.model.tree.GitTreeData;
 import org.kuali.student.git.model.tree.utils.GitTreeProcessor;
-import org.kuali.student.git.model.tree.utils.GitTreeProcessor.GitTreeBlobVisitor;
 import org.kuali.student.git.model.util.GitBranchDataUtils;
 import org.kuali.student.subversion.SvnDumpFilter;
 import org.kuali.student.svn.model.ExternalModuleInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Kuali Student Team
@@ -451,15 +447,16 @@ public class NodeProcessor implements IGitBranchDataProvider {
 			 */ 
 			try {
 				
-				ObjectId parentId = revisionMapper.getRevisionBranchHead((revision-1), data.getBranchName());
+				SvnRevisionMap parentRevMap = revisionMapper.getRevisionBranchHead((revision-1), data.getBranchName());
 				
-				if (parentId != null) {
-					data.setParentId(parentId);
+				if (parentRevMap != null) {
+
+					data.addParentBranch(parentRevMap);
 					
 					/*
 					 * Check for the existense of a fusion-maven-plugin.dat file in the root of this commit load in the externals if they exist.
 					 */
-					GitTreeData parentTree = treeProcessor.extractExistingTreeDataFromCommit(parentId);
+					GitTreeData parentTree = treeProcessor.extractExistingTreeDataFromCommit(parentRevMap.getCommitId());
 					
 					ObjectId fusionData = parentTree.find(repo, "fusion-maven-plugin.dat");
 					
@@ -566,10 +563,10 @@ public class NodeProcessor implements IGitBranchDataProvider {
 								copyFromRevision, largeBranchNameProvider);
 
 				// register the merge
-				ObjectId head = revisionMapper.getRevisionBranchHead(
+				SvnRevisionMap headRevMap = revisionMapper.getRevisionBranchHead(
 						copyFromRevision, copyFromBranchName);
 
-				if (head == null) {
+				if (headRevMap == null) {
 					/*
 					 * We don't have a branch for the copy from file so skip the
 					 * merge on this one.
@@ -578,7 +575,7 @@ public class NodeProcessor implements IGitBranchDataProvider {
 							"no branch for (path=%s, revision = %d",
 							copyFromPath, copyFromRevision));
 				} else {
-					data.addMergeParentId(head);
+					data.addMergeBranch(headRevMap);
 
 				}
 
@@ -722,16 +719,16 @@ public class NodeProcessor implements IGitBranchDataProvider {
 		String branchName = GitBranchUtils.getCanonicalBranchName(
 				copyFromBranchData.getBranchPath(), revision, largeBranchNameProvider);
 
-		ObjectId head = revisionMapper.getRevisionBranchHead(revision,
+		SvnRevisionMap headRevMap = revisionMapper.getRevisionBranchHead(revision,
 				branchName);
 
-		if (head == null) {
+		if (headRevMap == null) {
 			log.warn("(copy-from) no branch found for branch path = "
 					+ copyFromBranchData.getBranchPath() + " at " + revision);
 			return null;
 		}
 
-		GitTreeData copyFromTreeData = treeProcessor.extractExistingTreeDataFromCommit(head);
+		GitTreeData copyFromTreeData = treeProcessor.extractExistingTreeDataFromCommit(headRevMap.getCommitId());
 		
 		ObjectId blobId = copyFromTreeData.find(repo, copyFromBranchData.getPath());
 		
@@ -812,8 +809,8 @@ public class NodeProcessor implements IGitBranchDataProvider {
 											.getRevMap().getBranchName(), data,
 									revisionMapper);
 
-							ObjectId parentId = ObjectId.fromString(results
-									.getRevMap().getCommitId());
+							ObjectId parentId = results
+									.getRevMap().getCommitId();
 
 							// make a shallow copy of the parent tree. only the
 							// blobs in the root directory
@@ -873,9 +870,7 @@ public class NodeProcessor implements IGitBranchDataProvider {
 
 				for (SvnRevisionMapResults revisionMapResults : copyFromBranches) {
 
-					ObjectId copyFromBranchCommitId = ObjectId
-							.fromString(revisionMapResults.getRevMap()
-									.getCommitId());
+					SvnRevisionMap copyFromBranchRevMap = revisionMapResults.getRevMap();
 
 					String copyFromPath = revisionMapResults.getCopyFromPath();
 
@@ -904,7 +899,7 @@ public class NodeProcessor implements IGitBranchDataProvider {
 						GitBranchData adjustedTargetBranch = getBranchData(
 								branchName, currentRevision);
 						
-						applyCopy(adjustedTargetBranch, targetPath, copyFromBranchSubPath, copyFromBranchCommitId);
+						applyCopy(adjustedTargetBranch, targetPath, copyFromBranchSubPath, copyFromBranchRevMap.getCommitId());
 
 						// create the new branch
 						
@@ -925,9 +920,8 @@ public class NodeProcessor implements IGitBranchDataProvider {
 											.getRevMap().getBranchName(),
 									adjustedTargetBranch, revisionMapper);
 
-							ObjectId parentId = ObjectId
-									.fromString(revisionMapResults.getRevMap()
-											.getCommitId());
+							ObjectId parentId = revisionMapResults.getRevMap()
+											.getCommitId();
 
 							// make a shallow copy of the parent tree. only the
 							// blobs in the root directory
@@ -943,19 +937,19 @@ public class NodeProcessor implements IGitBranchDataProvider {
 						}
 
 						adjustedTargetBranch
-								.addMergeParentId(copyFromBranchCommitId);
+								.addMergeBranch(copyFromBranchRevMap);
 
-					} catch (VetoBranchException e) {
+                    } catch (VetoBranchException e) {
 
 						// add the branch tree into the target branch
 
-						applyCopy(targetBranch, targetPath, copyFromBranchSubPath, copyFromBranchCommitId);
+						applyCopy(targetBranch, targetPath, copyFromBranchSubPath, copyFromBranchRevMap.getCommitId());
 						
 						targetBranch.setCreated(true);
 
-						targetBranch.addMergeParentId(copyFromBranchCommitId);
+						targetBranch.addMergeBranch(copyFromBranchRevMap);
 
-					}
+                    }
 
 				}
 
@@ -1027,8 +1021,8 @@ public class NodeProcessor implements IGitBranchDataProvider {
 			GitBranchData targetBranch, OperationType type,
 			SvnRevisionMapResults revisionMapResults) {
 
-		ObjectId commitId = ObjectId.fromString(revisionMapResults.getRevMap()
-				.getCommitId());
+		ObjectId commitId = revisionMapResults.getRevMap()
+				.getCommitId();
 
 		try {
 

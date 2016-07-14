@@ -78,7 +78,7 @@ public class TestKSRevision27974 {
 		
 		SvnRevisionMap revMap = heads.get(0);
 		
-		ObjectId branchHead = ObjectId.fromString(revMap.getCommitId());
+		ObjectId branchHead = revMap.getCommitId();
 		
 		RevWalk rw = new RevWalk(repository);
 		

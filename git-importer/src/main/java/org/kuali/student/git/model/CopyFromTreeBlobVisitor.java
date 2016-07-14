@@ -15,21 +15,22 @@
  */
 package org.kuali.student.git.model;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.kuali.student.branch.model.BranchData;
 import org.kuali.student.git.model.CopyFromOperation.OperationType;
+import org.kuali.student.git.model.SvnRevisionMapper.SvnRevisionMap;
 import org.kuali.student.git.model.SvnRevisionMapper.SvnRevisionMapResults;
 import org.kuali.student.git.model.branch.BranchDetector;
 import org.kuali.student.git.model.branch.exceptions.VetoBranchException;
 import org.kuali.student.git.model.branch.utils.GitBranchUtils;
 import org.kuali.student.git.model.branch.utils.GitBranchUtils.ILargeBranchNameProvider;
 import org.kuali.student.git.model.tree.utils.GitTreeProcessor.GitTreeBlobVisitor;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * @author Kuali Student Team
@@ -172,10 +173,10 @@ public class CopyFromTreeBlobVisitor implements GitTreeBlobVisitor {
 					 */
 					targetBranch
 					.addBlob(alteredBlobPath, blobId, blobLog);
-					
-					targetBranch.addMergeParentId(ObjectId
-							.fromString(this.copyFromRevisionMapResults.getRevMap()
-									.getCommitId()));
+
+                    SvnRevisionMap revMap = this.copyFromRevisionMapResults.getRevMap();
+
+                    targetBranch.addMergeBranch(revMap);
 					
 					return true;
 				}
@@ -187,10 +188,8 @@ public class CopyFromTreeBlobVisitor implements GitTreeBlobVisitor {
 				// same branch
 				targetBranch
 						.addBlob(alteredBlobPath, blobId, blobLog);
-				
-				targetBranch.addMergeParentId(ObjectId
-						.fromString(this.copyFromRevisionMapResults.getRevMap()
-								.getCommitId()));
+
+                targetBranch.addMergeBranch(this.copyFromRevisionMapResults.getRevMap());
 				
 			} else {
 				// a different branch
@@ -202,9 +201,7 @@ public class CopyFromTreeBlobVisitor implements GitTreeBlobVisitor {
 				alteredBranchData.addBlob(alteredBlobPath, blobId,
 						blobLog);
 
-				alteredBranchData.addMergeParentId(ObjectId
-						.fromString(this.copyFromRevisionMapResults.getRevMap()
-								.getCommitId()));
+                alteredBranchData.addMergeBranch(this.copyFromRevisionMapResults.getRevMap());
 			}
 
 		} catch (VetoBranchException e) {

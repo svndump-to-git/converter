@@ -108,8 +108,12 @@ public class SvnRevisionMapper implements ILargeBranchNameProvider {
 		/**
 		 * @return the commitId
 		 */
-		public String getCommitId() {
-			return commitId;
+		public ObjectId getCommitId() {
+
+            if (commitId != null)
+                return ObjectId.fromString(commitId);
+            else
+                return null;
 		}
 
 		/**
@@ -527,28 +531,15 @@ public class SvnRevisionMapper implements ILargeBranchNameProvider {
 
 		inputStream.close();
 
-		String revisionString = String.valueOf(revision);
-
 		List<SvnRevisionMap> revisionHeads = new ArrayList<SvnRevisionMap>();
 
 		for (String line : lines) {
 
-			String[] parts = line.split("::");
+            SvnRevisionMap revMap = extractSvnRevisionMapFromLine(revision, line);
 
-			if (!parts[0].equals(revisionString)) {
-				log.warn(parts[0] + " is not a line for " + revisionString);
-				continue;
-			}
+            if (revMap != null)
+                revisionHeads.add(revMap);
 
-			String branchName = parts[1];
-
-			String commitId = parts[2];
-
-			String branchPath = GitBranchUtils.getBranchPath(branchName,
-					revision, this);
-
-			revisionHeads.add(new SvnRevisionMap(revision, branchName,
-					branchPath, commitId));
 
 		}
 
@@ -556,7 +547,29 @@ public class SvnRevisionMapper implements ILargeBranchNameProvider {
 
 	}
 
-	private InputStream getRevisionInputStream(final long revision)
+    private SvnRevisionMap extractSvnRevisionMapFromLine(long revision, String line) {
+
+        String revisionString = String.valueOf(revision);
+
+        String[] parts = line.split("::");
+
+        if (!parts[0].equals(revisionString)) {
+            log.warn(parts[0] + " is not a line for " + revisionString);
+            return null;
+        }
+
+        String branchName = parts[1];
+
+        String commitId = parts[2];
+
+        String branchPath = GitBranchUtils.getBranchPath(branchName,
+                revision, this);
+
+        return (new SvnRevisionMap(revision, branchName,
+                branchPath, commitId));
+    }
+
+    private InputStream getRevisionInputStream(final long revision)
 			throws IOException {
 
 		return getInputStream(new RevisionMapOffsetProvider() {
@@ -609,7 +622,7 @@ public class SvnRevisionMapper implements ILargeBranchNameProvider {
 	 * @return
 	 * @throws IOException
 	 */
-	public ObjectId getRevisionBranchHead(long revision, String branchName)
+	public SvnRevisionMap getRevisionBranchHead(long revision, String branchName)
 			throws IOException {
 
 		InputStream inputStream = getRevisionInputStream(revision);
@@ -621,8 +634,6 @@ public class SvnRevisionMapper implements ILargeBranchNameProvider {
 
 		inputStream.close();
 
-		String revisionString = String.valueOf(revision);
-		
 		String adjustedBranchName = branchName;
 		
 		if (!adjustedBranchName.startsWith(Constants.R_HEADS))
@@ -632,15 +643,9 @@ public class SvnRevisionMapper implements ILargeBranchNameProvider {
 
 			String[] parts = line.split("::");
 
-			if (!parts[0].equals(revisionString)) {
-				log.warn("incorrect version");
-				continue;
-			}
-
 			if (parts[1].equals(adjustedBranchName)) {
-				ObjectId id = ObjectId.fromString(parts[2]);
 
-				return id;
+                return extractSvnRevisionMapFromLine(revision, line);
 
 			}
 
@@ -768,7 +773,7 @@ public class SvnRevisionMapper implements ILargeBranchNameProvider {
 
 			if (copyFromPathParts.length > smallestLength) {
 				// check inside of the branch for the rest of the path
-				ObjectId commitId = ObjectId.fromString(revMap.getCommitId());
+				ObjectId commitId = revMap.getCommitId();
 
 				String insidePath = StringUtils.join(copyFromPathParts, "/",
 						smallestLength, copyFromPathParts.length);

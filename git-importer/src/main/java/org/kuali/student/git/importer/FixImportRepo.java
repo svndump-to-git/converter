@@ -89,7 +89,7 @@ public class FixImportRepo {
 			
 			for (SvnRevisionMap entry : mapper.getRevisionHeads(longRevision)) {
 				
-				updateRef(repo, entry.getBranchName(), revision, ObjectId.fromString(entry.getCommitId()));
+				updateRef(repo, entry.getBranchName(), revision, entry.getCommitId());
 			
 				allRefs.remove(entry.getBranchName().substring(Constants.R_HEADS.length()));
 			}
