@@ -80,7 +80,9 @@ public class TestKSCMContribImport extends AbstractGitImporterMainTestCase {
 		 * Also create the Subversion Revision Meta Data.
 		 */
 		
-		ExternalGitUtils.applyPatch("git", repository, new BZip2CompressorInputStream(new FileInputStream("src/test/resources/ks-r53642-base.patch.bz2")), System.out);
+		boolean patchResult = ExternalGitUtils.applyPatch("git", repository, new BZip2CompressorInputStream(new FileInputStream("src/test/resources/ks-r53642-base.patch.bz2")), System.out);
+
+        Assert.assertTrue("Expected the patch to have been applied.", patchResult);
 		
 		Git git = new Git (repository);
 		
