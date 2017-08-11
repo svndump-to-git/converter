@@ -4,7 +4,9 @@ README
 License:
 ========
 
-	Copyright 2013-2014 Kuali Foundation Licensed under the
+	Copyright 2013-2014 Kuali Foundation
+	Copyright 2017 Michael O'Cleirigh
+	Licensed under the
 	Educational Community License, Version 2.0 (the "License"); you may
 	not use this file except in compliance with the License. You may
 	obtain a copy of the License at
@@ -42,51 +44,6 @@ To support the Git migration a GitImporterParseOptions class was created which i
 The original history repair occured with Subversion version 3 dump streams since they are smaller and no file contents were being changed only copyfrom node attributes.
 
 For the Git conversion the contents of the blob's needed to be extracted and it was much simpler to use Subversion version 2 dump streams since they contain the full file content on adds and modifies.
-
-Artifacts:
-----------
-
-repository-tools-common:
-
-	Code common to both git and svn
-
-	BranchData class which represents a branch part and path part.  (an absolute path to a blob is split into an instance of this class)
-
-repository-tools-common-svn:
-	
-	Contains the SvnDumpFilter and INodeFilter constructs used to inject alternate copyfrom property values.
-
-repository-tools-common-git:
-
-	Common code related to branch detection and out mutable GitTreeNode object model (it generates unmutable git objects)
-
-	The main purpose of this module is to allow sharing code with the Kuali Foundation's fusion-maven-plugin.
-	
-git-importer:
-
-	GitImporterMain which runs the git import program and the base branch detector and conversion logic.
-
-	BranchDetectorImpl handles standard branches, tags and trunk layouts.
-
-	A plugin can be used to handle repository specific edge cases.
-
-	All files are converted its just that without specific branch detection there may be branches that have sub directories that are more properly branches in their own right.
-
-	This may be ok for history but could also be confusing to end users.
-
-	
-git-importer-foundation-plugin:
-
-	Plugin for the Kuali Foundation Repository conversion (custom branch heuristics for this repo branch structure)
-
-git-importer-rice-plugin:
-
-	Plugin for the Kuali Rice Repository conversion (custom branch heuristics for this repo branch structure)
-
-git-importer-student-plugin:
-
-	Plugin for the Kuali Student Repository conversion (custom branch heuristics for this repo branch structure)
-
 
 Running the Git Importer
 ========================
@@ -182,53 +139,5 @@ look at the exported url in the git commit
 
 11. If there are differences research what we are missing.  If a line has all
     zeros it means the file does not exist on that branch.
-
-Increasing Conversion Performance
-=================================
-
-This is an io bound operation that involves reading blob content from the dump stream and writing it into the git repository (new object insertion).
-
-Increasing disk throughput will reduce the time required to run the conversion program.
-
-In Linux you can create a tmpfs directory that is essentially stored in RAM and can be swapped out to disk (in the OS configured swap file or swap partition).
-
-Create a tmpfs partition
-------------------------
-
-$ mkdir /tmpfs-git
-$ mount -t tmpfs -o size=12G tmpfs /tmpfs-git
-
-Note you can specify the same command but with the remount option to grow an already mounted path
-
-$ mount -t tmpfs -o remount,size=24G tmpfs /tmpfs-git
-
-$ git init --bare /tmpfs-git/repo
-
-
-Create and add a swapfile
--------------------------
-
-When a program asks for more memory Linux will always say sure, no problem.  At some point it will notice that it is in an out of memory situation 
-(where the actual used memory is near or equal to the available RAM and SWAP spaces) and at that point Linux randomly kills applications to free up memory.
-
-Git GC's can take a lot of space and memory so to avoid the converter being killed lets add in a super large swap file.
-
-1. Create the swap file (this creates a sparse file)
-
-$ java -cp git-importer-$Version.jar org.kuali.student.git.importer.CreateSwapFile /mnt/30GB.swap 30
-
-2. initiaize the file as swap
-
-$ mkswap /mnt/30GB.swap
-
-3. bind the swap file to the loop0 loopback device.  Using the loopback is a trick to allow activiating a sparse file (normally swapon would complain)
-
-$ losetup /dev/loop0 /mnt/30GB.swap
-
-4. activate the swap space.  
-
-$ swapon /dev/loop0 
-
-
 
  
