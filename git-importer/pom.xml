@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.github.svndump-to-git</groupId>
     <artifactId>converter-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
   <artifactId>git-importer</artifactId>
   <name>Git Importer</name>
