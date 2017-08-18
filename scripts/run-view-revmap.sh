@@ -19,8 +19,8 @@ then
 fi
 
 
-echo "$JAVA_CMD -Xmx4096m -XX:MaxPermSize=512m $DEBUG_OPTS -cp \"../git-importer/target/git-importer-0.0.2-SNAPSHOT.jar\" org.kuali.student.git.importer.ViewSvnRevisionMapDataFileMain /home/mike/git/ks-git-bridge revisions $REV"
+echo "$JAVA_CMD -Xmx4096m -XX:MaxPermSize=512m $DEBUG_OPTS -cp \"../git-importer/target/git-importer-0.0.2-SNAPSHOT.jar\" ViewSvnRevisionMapDataFileMain /home/mike/git/ks-git-bridge revisions $REV"
 
-$JAVA_CMD -Xmx4096m -XX:MaxPermSize=512m $DEBUG_OPTS -cp "../git-importer/target/git-importer-0.0.2-SNAPSHOT.jar" org.kuali.student.git.importer.ViewSvnRevisionMapDataFileMain /home/mike/git/ks-git-bridge revisions $REV
+$JAVA_CMD -Xmx4096m -XX:MaxPermSize=512m $DEBUG_OPTS -cp "../git-importer/target/git-importer-0.0.2-SNAPSHOT.jar" ViewSvnRevisionMapDataFileMain /home/mike/git/ks-git-bridge revisions $REV
 
 

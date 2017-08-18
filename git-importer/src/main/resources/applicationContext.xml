@@ -19,7 +19,7 @@
 	<context:annotation-config/>
 	
 	
-	<bean id="gitExtractor" class="org.kuali.student.git.tools.GitExtractor">
+	<bean id="gitExtractor" class="io.github.svndump_to_git.tools.GitExtractor">
 	</bean>
 	
  </beans>

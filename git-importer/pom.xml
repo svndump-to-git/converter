@@ -80,19 +80,19 @@
   	<dependency>
 			<groupId>io.github.svndump-to-git</groupId>
 			<artifactId>repository-tools-common-svn</artifactId>
-			<version>${project.version}</version>
+			<version>${repository-tools.version}</version>
   	</dependency>
   	
   	<dependency>
 			<groupId>io.github.svndump-to-git</groupId>
 			<artifactId>repository-tools-common-git</artifactId>
-			<version>${project.version}</version>
+		<version>${repository-tools.version}</version>
   	</dependency>
   	
   	<dependency>
 		<groupId>io.github.svndump-to-git</groupId>
 	  <artifactId>repository-tools-common-svn</artifactId>
-	  <version>${project.version}</version>
+		<version>${repository-tools.version}</version>
 
       <type>test-jar</type>
       <scope>test</scope>
@@ -101,7 +101,7 @@
     <dependency>
 		<groupId>io.github.svndump-to-git</groupId>
 	  <artifactId>repository-tools-common-git</artifactId>
-	  <version>${project.version}</version>
+		<version>${repository-tools.version}</version>
 
       <type>test-jar</type>
       <scope>test</scope>
@@ -139,7 +139,7 @@
 					    </filters>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>org.kuali.student.git.importer.GitImporterMain</mainClass>
+									<mainClass>io.github.svndump_to_git.importer.GitImporterMain</mainClass>
 								</transformer>
 								<!-- spring schema's and handlers -->
 								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.kuali.student.git.model;
+package io.github.svndump_to_git.git.model;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,7 +27,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.kuali.student.git.importer.GitImporterMain;
+import io.github.svndump_to_git.importer.GitImporterMain;
 
 /**
  * 

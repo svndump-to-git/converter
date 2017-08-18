@@ -21,7 +21,7 @@ License:
 
 The Java code uses FileInputStream's and FileOutputStream's and some code copied from SVNKit that allows us to stream.readLine() in a way similiar to how a BufferedReader works.
 
-See org.kuali.student.common.io.IOUtils for the usage of the methods.  It is a copy of org.tmatesoft.svn.core.internal.wc.SVNUtil version 1.7.8 which is licenced by the SVN Kit Licence.
+See io.github.svndump_to_git.common.io.IOUtils for the usage of the methods.  It is a copy of org.tmatesoft.svn.core.internal.wc.SVNUtil version 1.7.8 which is licenced by the SVN Kit Licence.
 
 http://svnkit.com/license.html
 

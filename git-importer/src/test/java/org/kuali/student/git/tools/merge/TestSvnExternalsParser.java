@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.kuali.student.git.tools.merge;
+package io.github.svndump_to_git.git.tools.merge;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,12 +23,12 @@ import java.util.List;
 import org.eclipse.jgit.lib.ObjectId;
 import org.junit.Assert;
 import org.junit.Test;
-import org.kuali.student.git.model.ExternalModuleUtils;
-import org.kuali.student.git.model.ExternalModuleUtils.IBranchHeadProvider;
-import org.kuali.student.git.model.branch.AbstractBranchDetectorTest;
-import org.kuali.student.git.model.branch.exceptions.VetoBranchException;
-import org.kuali.student.git.model.branch.large.LargeBranchNameProviderMapImpl;
-import org.kuali.student.svn.model.ExternalModuleInfo;
+import io.github.svndump_to_git.git.model.ExternalModuleUtils;
+import io.github.svndump_to_git.git.model.ExternalModuleUtils.IBranchHeadProvider;
+import io.github.svndump_to_git.git.model.branch.AbstractBranchDetectorTest;
+import io.github.svndump_to_git.git.model.branch.exceptions.VetoBranchException;
+import io.github.svndump_to_git.git.model.branch.large.LargeBranchNameProviderMapImpl;
+import io.github.svndump_to_git.svn.model.ExternalModuleInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.kuali.student.git.tools.merge;
+package io.github.svndump_to_git.git.tools.merge;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,16 +27,16 @@ import org.eclipse.jgit.lib.RefUpdate.Result;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.junit.Assert;
 import org.junit.Test;
-import org.kuali.student.git.model.BranchMergeInfo;
-import org.kuali.student.git.model.BranchRangeDataProviderImpl;
-import org.kuali.student.git.model.DummyGitTreeNodeInitializer;
-import org.kuali.student.git.model.SvnMergeInfoUtils;
-import org.kuali.student.git.model.SvnRevisionMapper;
-import org.kuali.student.git.model.branch.BranchDetector;
-import org.kuali.student.git.model.branch.BranchDetectorImpl;
-import org.kuali.student.git.model.branch.large.LargeBranchNameProviderMapImpl;
-import org.kuali.student.git.model.tree.GitTreeData;
-import org.kuali.student.svn.model.AbstractGitRespositoryTestCase;
+import io.github.svndump_to_git.git.model.BranchMergeInfo;
+import io.github.svndump_to_git.model.BranchRangeDataProviderImpl;
+import io.github.svndump_to_git.git.model.DummyGitTreeNodeInitializer;
+import io.github.svndump_to_git.git.model.SvnMergeInfoUtils;
+import io.github.svndump_to_git.git.model.SvnRevisionMapper;
+import io.github.svndump_to_git.git.model.branch.BranchDetector;
+import io.github.svndump_to_git.git.model.branch.BranchDetectorImpl;
+import io.github.svndump_to_git.git.model.branch.large.LargeBranchNameProviderMapImpl;
+import io.github.svndump_to_git.git.model.tree.GitTreeData;
+import io.github.svndump_to_git.svn.model.AbstractGitRespositoryTestCase;
 
 /**
  * @author Kuali Student Team
@@ -57,7 +57,7 @@ public class TestActualSvnMergeDeltaCompression extends
 	
 
 	/* (non-Javadoc)
-	 * @see org.kuali.student.git.tools.AbstractGitRespositoryTestCase#onBefore()
+	 * @see io.github.svndump_to_git.git.tools.AbstractGitRespositoryTestCase#onBefore()
 	 */
 	@Override
 	protected void onBefore() throws Exception {
@@ -71,7 +71,7 @@ public class TestActualSvnMergeDeltaCompression extends
 	
 
 	/* (non-Javadoc)
-	 * @see org.kuali.student.git.tools.AbstractGitRespositoryTestCase#onAfter()
+	 * @see io.github.svndump_to_git.git.tools.AbstractGitRespositoryTestCase#onAfter()
 	 */
 	@Override
 	protected void onAfter() throws Exception {
@@ -89,7 +89,7 @@ public class TestActualSvnMergeDeltaCompression extends
 
 		GitTreeData trunk = new GitTreeData(new DummyGitTreeNodeInitializer());
 		
-		String branchFilePath = "src/main/java/org/kuali/student/enrollment/test.txt";
+		String branchFilePath = "src/main/java/io.github.svndump_to_git/enrollment/test.txt";
 		storeFile (inserter, trunk, branchFilePath, "test");
 
 		ObjectId commitId = commit (inserter, trunk, "created branch");

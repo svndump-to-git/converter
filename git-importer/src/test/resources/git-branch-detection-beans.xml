@@ -18,7 +18,7 @@
 
 	<alias name="baseBranchDetector" alias="branchDetector"/>
 	 
-	<bean id="baseBranchDetector" class="org.kuali.student.git.model.branch.BranchDetectorImpl">
+	<bean id="baseBranchDetector" class="io.github.svndump_to_git.git.model.branch.BranchDetectorImpl">
 	
 		<property name="alternateTagNames">
 			<list>

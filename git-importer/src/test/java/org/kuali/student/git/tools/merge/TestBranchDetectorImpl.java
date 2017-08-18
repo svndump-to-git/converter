@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.kuali.student.git.tools.merge;
+package io.github.svndump_to_git.git.tools.merge;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kuali.student.branch.model.BranchData;
-import org.kuali.student.git.model.branch.AbstractBranchDetectorTest;
-import org.kuali.student.git.model.branch.exceptions.VetoBranchException;
+import io.github.svndump_to_git.branch.model.BranchData;
+import io.github.svndump_to_git.git.model.branch.AbstractBranchDetectorTest;
+import io.github.svndump_to_git.git.model.branch.exceptions.VetoBranchException;
 
 /**
  * @author Kuali Student Team
@@ -48,12 +48,12 @@ public class TestBranchDetectorImpl extends AbstractBranchDetectorTest {
 	@Test
 	public void testBranchUtils() throws VetoBranchException {
 		
-		BranchData bd = branchDetector.parseBranch(123456L, "poc/personidentity/personidentity-api/branches/personidentity-api-dev/src/main/java/org/kuali/student/poc/xsd/personidentity/person/dto/AttributeSetDefinition.java");
+		BranchData bd = branchDetector.parseBranch(123456L, "poc/personidentity/personidentity-api/branches/personidentity-api-dev/src/main/java/io.github.svndump_to_git/poc/xsd/personidentity/person/dto/AttributeSetDefinition.java");
 	
 		Assert.assertNotNull(bd);
 		
 		Assert.assertEquals("poc/personidentity/personidentity-api/branches/personidentity-api-dev", bd.getBranchPath());
-		Assert.assertEquals("src/main/java/org/kuali/student/poc/xsd/personidentity/person/dto/AttributeSetDefinition.java", bd.getPath());
+		Assert.assertEquals("src/main/java/io.github.svndump_to_git/poc/xsd/personidentity/person/dto/AttributeSetDefinition.java", bd.getPath());
 		Assert.assertEquals(Long.valueOf(123456L), bd.getRevision());
 		
 		
@@ -68,12 +68,12 @@ public class TestBranchDetectorImpl extends AbstractBranchDetectorTest {
 		
 
 	
-	bd = branchDetector.parseBranch(2237L, "enumeration/enumeration-impl/src/main/java/org/kuali/student/enumeration/entity/ContextDAO.java");
+	bd = branchDetector.parseBranch(2237L, "enumeration/enumeration-impl/src/main/java/io.github.svndump_to_git/enumeration/entity/ContextDAO.java");
 		
 		Assert.assertNotNull(bd);
 		
 		Assert.assertEquals("enumeration", bd.getBranchPath());
-		Assert.assertEquals("enumeration-impl/src/main/java/org/kuali/student/enumeration/entity/ContextDAO.java", bd.getPath());
+		Assert.assertEquals("enumeration-impl/src/main/java/io.github.svndump_to_git/enumeration/entity/ContextDAO.java", bd.getPath());
 		Assert.assertEquals(Long.valueOf(2237L), bd.getRevision());
 	}
 	

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.kuali.student.git.model;
+package io.github.svndump_to_git.git.model;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
@@ -25,10 +25,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.kuali.student.git.model.tree.GitTreeData;
-import org.kuali.student.git.model.tree.utils.GitTreeProcessor;
-import org.kuali.student.git.model.utils.GitTestUtils;
-import org.kuali.student.svn.model.ExternalModuleInfo;
+import io.github.svndump_to_git.git.model.tree.GitTreeData;
+import io.github.svndump_to_git.git.model.tree.utils.GitTreeProcessor;
+import io.github.svndump_to_git.git.model.utils.GitTestUtils;
+import io.github.svndump_to_git.svn.model.ExternalModuleInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

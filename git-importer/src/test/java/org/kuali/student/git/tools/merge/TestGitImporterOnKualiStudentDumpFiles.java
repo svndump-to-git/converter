@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.kuali.student.git.tools.merge;
+package io.github.svndump_to_git.git.tools.merge;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +30,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.BlockJUnit4ClassRunner;
-import org.kuali.student.git.importer.GitImporterMain;
-import org.kuali.student.git.model.GitRepositoryUtils;
-import org.kuali.student.git.utils.GitImporterDateUtils;
+import io.github.svndump_to_git.importer.GitImporterMain;
+import io.github.svndump_to_git.git.model.GitRepositoryUtils;
+import io.github.svndump_to_git.utils.GitImporterDateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

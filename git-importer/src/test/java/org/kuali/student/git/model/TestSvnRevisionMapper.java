@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.kuali.student.git.model;
+package io.github.svndump_to_git.git.model;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.AddCommand;
@@ -37,7 +37,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.kuali.student.git.model.SvnRevisionMapper.SvnRevisionMap;
+import io.github.svndump_to_git.git.model.SvnRevisionMapper.SvnRevisionMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -13,17 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.kuali.student.git.tools.merge;
+package io.github.svndump_to_git.git.tools.merge;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.kuali.student.git.model.BranchMergeInfo;
-import org.kuali.student.git.model.SvnMergeInfoUtils;
-import org.kuali.student.git.model.SvnMergeInfoUtils.BranchRangeDataProvider;
-import org.kuali.student.git.model.branch.AbstractBranchDetectorTest;
-import org.kuali.student.git.model.branch.exceptions.VetoBranchException;
-import org.kuali.student.git.model.branch.large.LargeBranchNameProviderMapImpl;
+import io.github.svndump_to_git.git.model.BranchMergeInfo;
+import io.github.svndump_to_git.git.model.SvnMergeInfoUtils;
+import io.github.svndump_to_git.git.model.SvnMergeInfoUtils.BranchRangeDataProvider;
+import io.github.svndump_to_git.git.model.branch.AbstractBranchDetectorTest;
+import io.github.svndump_to_git.git.model.branch.exceptions.VetoBranchException;
+import io.github.svndump_to_git.git.model.branch.large.LargeBranchNameProviderMapImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -20,7 +20,7 @@
 	
 	<import resource="classpath:git-branch-detection-beans.xml"/>
 	
-	<bean id="svnDumpFilter" class="org.kuali.student.subversion.SvnDumpFilter" />
+	<bean id="svnDumpFilter" class="io.github.svndump_to_git.subversion.SvnDumpFilter" />
 
 	<beans profile="configured-plugin">
 		<import resource="git-importer-plugin-context.xml" />
